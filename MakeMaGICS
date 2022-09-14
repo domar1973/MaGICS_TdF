@@ -1,0 +1,198 @@
+#!/bin/sh
+##############################################################
+#
+#                       INSTALLATION SCRIPT
+#
+#          Magnetic Gamma Interactions Computer Simulator
+#	                     (MaGICS)
+#                Photon in Earth's Magnetic Field
+#              For use as 'special primary' at AIRES
+#                         March     2003
+#                         June      2003
+#                         September 2003
+#                         April     2004
+#
+# Revised for release 1.5.0: September 9, 2022 (beta)
+#
+# writen by Daniel Badagnani <dbadagnani@untdf.edu.ar>
+# Instituto de Ciencias Polares, Ambiente y Recursos Naturales
+# Universidad Nacional de Tierra del Fuego
+# Fuegia Basket 251, CP 9410
+# Ushuaia - ARGENTINA
+#
+#
+##############################################################
+#
+# Some constants used within this installation script
+#
+f77command="gfortran -O2 -Wall"
+#
+##############################################################
+#
+if [ -f .MaGICS.cfg ]
+then
+  . ./.MaGICS.cfg
+else
+#
+# Some default values for environment variables.
+#
+  MaGICSROOT=`pwd`
+  aireslib=$HOME/rhd/aires/lib
+#
+# Checking existence of AIRES installation.
+#
+  alw=TRUE
+  if [ -f $HOME/.airesrc ]
+  then
+    . $HOME/.airesrc
+    vwar=TRUE
+    if [ -x ${Airesbindir}/airesversion ]
+    then
+      set xxx `${Airesbindir}/airesversion -b`
+      av1=$2
+      av2=$3
+      av3=$4
+      avv12=${av1}${av2}
+      avp=`${Airesbindir}/airesversion`
+      if [ $avv12 -ge 28 ]
+      then
+        vwar=
+      fi
+    else
+      avp="(version unknown)"
+    fi
+    if [ $vwar ]
+    then
+      echo
+      echo "WARNING: Detected installation of AIRES $avp."
+      echo "AIRES 2.8.0 or higher needed to use MaGICS."
+      echo "Do you wish to continue? (Y|N): "
+      read sw
+      if [ "_$sw" = "_Y" -o "_$sw" = "_y" ]
+      then
+        echo
+      else
+        echo Installation cancelled.
+        exit
+      fi
+    fi
+    if [ -d $Aireslibdir ]
+    then
+      aireslib=$Aireslibdir
+      alw=
+    fi
+  fi
+  if [ $alw ]
+  then
+    echo
+    echo "WARNING: Could not detect AIRES installation."
+  fi
+#
+fi
+#
+echo
+echo Welcome to the MaGICS installation procedure.
+echo Please supply the following data.
+echo
+#
+MaGICSROOTprompt="MaGICS root directory"
+aireslibprompt="AIRES library path"
+#
+for dn in MaGICSROOT aireslib; do
+#
+  prompt=\$${dn}prompt
+  eval prompt="$prompt"
+  vdef=\$$dn
+  eval vdef=$vdef
+#
+  if [ ! -d $vdef ]
+  then
+    vdef="NONE"
+  fi
+#
+  swread=TRUE
+  while [ $swread ]
+  do
+    echo -n "$prompt [${vdef}]: "
+    read rdir
+    if [ "_$rdir" = "_" ]
+    then
+      if [ "$vdef" = "NONE" ]
+      then
+        echo You must enter a valid directory.
+      else
+        swread=
+      fi
+    else
+      if [ ! -d $rdir ]
+      then
+        echo Invalid directory.
+      else
+        swread=
+        eval ${dn}=$rdir
+      fi
+    fi
+  done
+#
+done
+#
+rm -f ${MaGICSROOT}/.MaGICS.cfg
+cat > ${MaGICSROOT}/.MaGICS.cfg <<EOF
+# Configuration date: `date`
+MaGICSROOT=$MaGICSROOT
+aireslib=$aireslib
+EOF
+#
+# COMPILING AND LINKING
+#
+for d in ${MaGICSROOT}/src ${MaGICSROOT}/src/MaGICS ${MaGICSROOT}/src/NR; do
+  if [ ! -d $d ]
+  then
+    echo
+    echo Cannot find source directory $d !
+    echo Installation aborted
+    exit 33
+  fi
+done
+#
+exeimg=${MaGICSROOT}/magics
+#
+cd ${MaGICSROOT}/src/MaGICS
+#
+rm -f $exeimg
+$f77command -O2 -o $exeimg magics.c \
+    ../NR/dbskr3_fromNR.f ../NR/bessik.f ../NR/beschb.f ../NR/chebev.f \
+    -I. -L$aireslib -lAires
+rc=$?
+#
+isuccess=
+if [ $rc -eq 0 ]
+then
+  if [ -x $exeimg ]
+  then
+    isuccess=TRUE
+  fi
+fi
+#
+cd ${MaGICSROOT}
+if [ -x ./magicsversion ]
+then
+  set xxx `./magicsversion -b`
+  vdir="MaGICS.${2}-${3}-${4}"
+fi
+#
+echo
+if [ $isuccess ]
+then
+  echo Installation completed successfully.
+else
+  echo Installation failed!!
+fi
+echo
+#
+#
+################################################################
+#
+# ENJOY USING MaGICS!
+#
+###############################################################

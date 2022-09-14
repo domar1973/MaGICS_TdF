@@ -1,0 +1,85 @@
+#########################################################
+#
+#        Using MaGICS: an example
+#        Daniel Badagnani, June 7, 2005
+#
+#########################################################
+Task MaGICSexample
+#
+# The MaGICS module.
+#
+# You can choose between specifying an explicit path for the
+# MaGICS executable binary, defining a search path by means of the
+# InputPath directive, or copying or linking the file to your working
+# directory.
+
+SetGlobal Dyn MaGICS ./magics # (here we assume that the executable
+                              # is in the current directory)
+
+# DEFINING GAMMA PRIMARIES WITH MaGICS
+
+AddSpecialParticle  gamma1  {MaGICS} UnconvertedPhoton
+# This only injects a photon in the atmosphere and returns the
+# conversion probability
+
+AddSpecialParticle  gamma2  {MaGICS} 1Derberaprox_v2 ForceConversion
+# This will use the Erber's bremsstrahlung amplitude and
+# particle by particle MC propagation.
+# magics will run until the photon gets converted
+# (do not use this primary if the conversion probability is
+# too small)
+
+AddSpecialParticle  gamma3  {MaGICS}
+# This will use the default 1Dklepikov_v2
+# and will not force conversion 
+
+SetGlobal PEMF_init_altit 1e8
+# Begins propagation at an altitude of 10E8 m. 
+# Default: 5 earth radii
+
+SetGlobal PEMF_Deblevel 0
+# No debug data saved at debugdata.log (default)
+
+# Other shower parameters and run conditions are defined as usual.
+
+# The seed of the random number generator is set manually.
+
+RandomSeed         0.2560013287
+
+TotalShowers		10
+PrimaryParticle		gamma3
+PrimaryEnergy		3E20 eV
+SpecialParticLog        2
+
+RunsPerProcess 1  
+ShowersPerRun  1
+
+Site ElNihuil
+
+PrimaryZenAngle 35 deg
+PrimaryAzimAngle 180 deg Geographic
+
+Thinning   1e-4 Rel  # THIS IS FOR DEMONSTRATION ONLY! SEE AIRES MANUAL
+                     # TO SET PRODUCTION THINNING LEVELS.
+
+Injection  100  km
+GroundAltitude 98.9 km
+
+#
+# Saving all the particles that reach "ground".
+#
+SaveInFile grdpcles All
+
+# Threshold energies. Particles are not followed below these energies.
+
+GammaCutEnergy     200 KeV
+ElectronCutEnergy  200 KeV
+MuonCutEnergy        1 MeV
+MesonCutEnergy     1.5 MeV
+NuclCutEnergy      150 MeV
+
+
+DelGlobal MaGICS   # We don't need this variable any more
+
+End
+

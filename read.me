@@ -1,0 +1,139 @@
+/*******************************************************
+/**                       MaGICS_TdF
+/**     Module for EM shower simulation in GF under AIRES
+/**       Daniel O. Badagnani <dbadagnani@untdf.edu.ar>
+/** Instituto de Ciencias Polares, Ambiente y Recursos Naturales
+/**      Universidad Nacional de Tierra del Fuego
+/**                  Ushuaia - Argentina
+/**
+/** Beta release, September 9th 2022
+/**
+/** This software is based on MaGICS, developed by same author at
+/** Instituto de Física, Universidad Nacional de La Plata,
+/** La Plata, Argentina
+/**                    JULY      2003
+/**                    SEPTEMBER 2003
+/**                    APRIL     2004
+/** Minor changes in July 2016 to allow compilation with gfortran
+/** by Sergio Sciutto (IF-UNLP).
+/**
+/** Minor changes in August 2022 to reemplace the no longer available
+/** CERNLIB library Bessel functions by Sergio Sciutto (IF-UNLP).
+/**
+/*******************************************************
+
+This is MaGICS_TdF 1.5.0 (beta, with correction of reported bug in calculation of
+longitudinal component of the geomagnetic field).
+The version numbers continue from MaGICS for backward compatibility.
+
+This module set a photon or electron of the specified energy and
+simulate its interaction with the Earth's magnetic
+field until the atmosphere is reached.
+
+INSTALLATION
+
+You will need to have AIRES 2.8.0 or higher installed in your system.
+You can download AIRES from www.fisica.unlp.edu.ar/auger/aires.
+
+If you are reading this, you have already uncompressed succesfully 
+MaGICS.tar.gz in some directory.
+Call the AIRES directory $AIRES and the MaGICS root directory $MaGICS.
+
+Enter $MaGICS and run the script MakeMaGICS. It will prompt you 
+default values for $MaGICS and $AIRES, and ask you to input 
+the actual values for them (just press enter if you agree with the 
+defaults). A configuration file .magics.cfg will be written with 
+these input values and a binary called "magics" will be generated
+in the directory if the "installation has been completed succesfully" 
+message is prompt. In order to use it in gamma simulations just copy
+the file in your working directory (see the AIRES manual for a reference 
+on the use of special primary modules, and the .imp file examples in
+this distribution).
+
+QUICK GUIDE   
+
+Module parameters:
+The first one sets the propagation algorythm and primary
+--------------------------------------------------------------
+
+  "1Derberaprox"
+  "1Derberaprox+"
+  "1Derberaprox-"
+
+  "1Derberaprox_v2"
+  "1Derberaprox_v2+"
+  "1Derberaprox_v2-"
+
+  "1Dklepikov"
+  "1Dklepikov+"
+  "1Dklepikov-"
+
+  "1Dklepikov_v2"   (DEFAULT)
+  "1Dklepikov_v2+"
+  "1Dklepikov_v2-"
+
+  "3Dklepikov_v2"
+  "3Dklepikov_v2+"
+  "3Dklepikov_v2-"
+
+  "UnconvertedPhoton"
+
+The "UnconvertedPhoton" option simply 
+injects the photon in the atmosphere, returning the 
+conversion probability in the special primary record.
+
+"_v2" algorythms propagate full particle history at step; 
+the other
+ones propagate all particles a time step. 
+"+" ones sets positrons as primaries, 
+"-" ones does so with electrons.
+
+The second ones specify conversion enforcing:
+
+  "ForceConversion"
+
+  "NoForceConversion"  (default)
+
+The conversion probability, number of trials untill conversion
+and conversion altitude (if any) are returned to AIRES kernel using
+the function  speisetrealvar_(), in the positions
+ 1: Conversion Probability
+ 2: Number of trials (set to zero if conversion is not forced)
+ 3: conversion altitude in meters (if any)
+
+
+Global Parameters:
+-----------------
+
+
+  "PEMF_Deblevel"
+
+If set <> 0 it will force the module to print some debug information.
+It can be usefull if you want to know why something is going wrong, or
+if you want to debug your
+own modifications (printing to debugdata.dat if debuglevel > some value) 
+Default value: 0 (no debug data saved).
+
+  "PEMF_init_altit"
+
+Altitude of injected photon, in meters. 
+Default value: five Earth's radii.
+
+Return codes
+------------
+
+The module will send the following return codes to the AIRES kernel
+(see AIRES user's manual)
+
+0 if normal execution taked place
+Warning 11 if you have passed more than two arguments to the module
+Error   21 if you have set an unreadable value for PEMF_Deblevel
+           (default value 0 enforced)
+Error   22 if you have set an unreadable value for PEMF_init_altit
+           (default value 5 earth radii enforced)
+Error   23 if you have passed an invalid name for the propagation algorythm
+           (default value 1D_erberapprox_v2 enforced)
+Error   24 if you have passed an invalid seccond argument to the module
+           (default value NoForceConversion enforced)
+Error   25 if ForceConversion is used with UnconvertedPhoton option
+           (default value NoForceConversion enforced)
