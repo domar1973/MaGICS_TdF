@@ -131,6 +131,8 @@ double random_electron_energy_fraction(double chi)
   return((min + urandom_())/1024.0);
 }
 
+#define ERBER_PAIR_COEFFICIENT 0.16
+
 /*Erber's analytical aproximation*/
 double pair_production_probability(double Energy, 
                                    double chi, double deltatime)
@@ -138,7 +140,11 @@ double pair_production_probability(double Energy,
   double besselarg,result;
   int mu=1;
   besselarg=2/(3*chi);
-  result=1.234E18*deltatime*(electron_mass*c*c/(Energy*1E9*e))*
+  /* Erber 1966 Eqs. (3.3d, 3.4): 0.16 is the dimensionless
+     coefficient; alpha*m_e*c^2/hbar converts the attenuation to a
+     rate per unit time. */
+  result=ERBER_PAIR_COEFFICIENT*alpha*electron_mass*c*c/hbar*
+               deltatime*(electron_mass*c*c/(Energy*1E9*e))*
                sqr(dbskr3_(&besselarg,&mu));
   return(result);
 }
