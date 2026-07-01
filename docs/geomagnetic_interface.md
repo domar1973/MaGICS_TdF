@@ -42,13 +42,13 @@ Outputs:
 
 | Argument | Meaning | Unit |
 | --- | --- | --- |
-| `b` | geomagnetic field strength `F = |B|` | tesla for this low-level routine as used by MaGICS |
+| `b` | geomagnetic field strength `F = |B|` | nanotesla |
 | `inclination` | magnetic inclination `I` | degrees |
 | `declination` | magnetic declination `D` | degrees |
 
-The `b` unit is not stated directly for the low-level binary symbol. It is inferred from MaGICS' SI use: `cartesian_magnetic_field()` passes `b` into Cartesian components at `MaGICS.1-5-0/src/MaGICS/geometry.c:73-86`, and `chi()` divides `Bperp` by `bcrit` where `bcrit` is computed from SI constants in tesla at `MaGICS.1-5-0/src/MaGICS/init.c:169-170`.
+The first diagnostic run shows that `b` is returned numerically in nT: AIRES reports `22.665 uT` near the site, while the MaGICS diagnostic CSV reports `B = 22661.8` at the same point; `22661.8 nT = 22.6618 uT`. This matches the public AIRES input-data convention for magnetic field strength.
 
-Important distinction: AIRES stores `realdata[22]` geomagnetic field strength in nT in the public input-data array, documented in `aires/19-04-08/doc/UsersManual190408.pdf` text extraction at lines 9461-9465. MaGICS does not use `realdata[22]` for `chi()`; it calls `geomagnetic_()` directly.
+Important consequence: MaGICS' `chi()` uses this nT-valued `Bperp` directly against `bcrit`, whose numeric value is computed from SI constants at `MaGICS.1-5-0/src/MaGICS/init.c:169-170`. The current `chi()` remains numerically correct because `particle.energy` is numerically in GeV and the nT magnetic field contributes the reciprocal factor `1e-9`.
 
 ## Units of `B`
 
@@ -60,8 +60,9 @@ Manual evidence:
 | Accepted magnetic units include tesla, gauss, and gamma/nT | `aires/19-04-08/doc/UsersManual190408.pdf` text extraction | 2989-2993 |
 | Manual `GeomagneticField 32 uT -60 deg 2 deg` example maps parameters to `F`, `I`, `D` | `aires/19-04-08/doc/UsersManual190408.pdf` text extraction | 4114-4127 |
 | Public AIRES `realdata[22]` is field strength in nT | `aires/19-04-08/doc/UsersManual190408.pdf` text extraction | 9461-9465 |
+| MaGICS diagnostic CSV gives `B = 22661.8` where AIRES reports `22.665 uT` | first diagnostic run | runtime evidence |
 
-Conclusion for MaGICS: `geomagnetic_()` output `b` must be in tesla for the existing `chi()` expression to be dimensionally consistent with `bcrit`.
+Conclusion for MaGICS: `geomagnetic_()` output `b` is numerically in nT. Any future unit cleanup must convert both the photon energy and magnetic field conventions together, because changing only one side would change `chi` by `1e9`.
 
 ## Units of `altitude`
 

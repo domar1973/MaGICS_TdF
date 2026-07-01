@@ -6,6 +6,13 @@
  and angular distributions.
 
 *****************************************************************/
+#ifdef MAGICS_CONVERSION_DIAGNOSTICS
+#ifndef MAGICS_CONVERSION_DIAGNOSTICS_PATH
+#define MAGICS_CONVERSION_DIAGNOSTICS_PATH \
+  "docs/conversion_probability_diagnostics.csv"
+#endif
+#endif
+
 double sqr(double x)
 {
   return x*x;
@@ -213,9 +220,6 @@ double conversion_probability()
   int diagnostics_over_01=0;
   int diagnostics_out_of_range=0;
   double diagnostics_max_proba=-1;
-#ifndef MAGICS_CONVERSION_DIAGNOSTICS_PATH
-#define MAGICS_CONVERSION_DIAGNOSTICS_PATH "conversion_probability_diagnostics.csv"
-#endif
   diagnostics_csv=fopen(MAGICS_CONVERSION_DIAGNOSTICS_PATH,"w");
   if (diagnostics_csv==NULL)
     {
@@ -226,7 +230,7 @@ double conversion_probability()
     {
       fprintf(diagnostics_csv,
               "step,time_s,distance_m,altitude_m,energy_GeV,"
-              "B_T,Bperp_T,chi,dt_s,step_probability,"
+              "B_nT,Bperp_nT,chi,dt_s,step_probability,"
               "accumulated_survival,accumulated_probability\n");
     }
 #endif

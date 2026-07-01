@@ -29,7 +29,7 @@ where `E_gamma = Energy * 1e9 * e` joules because `Energy` is passed in GeV.
 | `m_e c^2` | `electron_mass*c*c` | `J` | SI constants. |
 | `Energy` | argument | `GeV` | Converted by `Energy * 1E9 * e` in `src/MaGICS/functions.c:134`. |
 | `e` | `e` | `C`, used here as `J/eV` | `src/MaGICS/constants.h:5`; the numeric value is the elementary charge. |
-| `chi` | argument | dimensionless | Computed as an energy ratio times a field ratio in `src/MaGICS/geometry.c:196`. |
+| `chi` | argument | dimensionless | Computed as an energy ratio times a field ratio in `src/MaGICS/geometry.c:196`; see the implicit unit convention below. |
 | `K_{1/3}` | `dbskr3_` | dimensionless | Function of dimensionless `2/(3 chi)`. |
 
 The returned value is dimensionless.
@@ -60,7 +60,7 @@ No expression, comment, or named constant in this repository derives `1.234E18`;
 
 1. Rotates particle position and direction from AIRES coordinates to geocentric Cartesian coordinates.
 2. Computes geographic latitude, longitude and altitude.
-3. Calls `cartesian_magnetic_field()`, which calls AIRES `geomagnetic_()` and returns the geomagnetic field in tesla if the AIRES interface is used consistently with MaGICS' SI `bcrit`.
+3. Calls `cartesian_magnetic_field()`, which calls AIRES `geomagnetic_()` and returns the geomagnetic field numerically in nanotesla.
 4. Computes the field transverse to the photon direction:
 
 ```text
@@ -73,7 +73,14 @@ Bperp = |B - k (B . k)|
 chi = (Energy * e / (2 * electron_mass * c^2)) * (Bperp / bcrit)
 ```
 
-This is exactly `src/MaGICS/geometry.c:196`. Since `Energy` is in GeV elsewhere but this line multiplies only by `e`, the implemented expression is numerically consistent with `Energy` being interpreted as eV at this point, not GeV. This document records the implemented formula; it does not correct it.
+This is exactly `src/MaGICS/geometry.c:196`. The convention is implicit:
+
+- `particle.energy` is numerically in GeV.
+- `geomagnetic_()` returns `B` numerically in nT.
+- The code multiplies `Energy` by `e`, not by `1e9 * e`, and divides the nT-valued `Bperp` by the SI-valued numeric `bcrit`.
+- The missing `1e9` in the energy conversion and the `1e-9` from using nT instead of T cancel numerically.
+
+Therefore the current `chi()` value is numerically correct, but the unit convention is fragile. One must not "fix" only the energy unit or only the magnetic-field unit: changing just one side would change `chi` by a factor of `1e9`.
 
 `bcrit` is set in `inic()` as:
 

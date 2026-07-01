@@ -160,8 +160,7 @@ exeimg=${MaGICSROOT}/magics
 #
 if [ "_$MAGICS_CONVERSION_DIAGNOSTICS" = "_1" ]
 then
-  diagnostics_csv=${MaGICSROOT}/docs/conversion_probability_diagnostics.csv
-  diagnostics_flags="-DMAGICS_CONVERSION_DIAGNOSTICS -DMAGICS_CONVERSION_DIAGNOSTICS_PATH=\\\"${diagnostics_csv}\\\""
+  diagnostics_flags="-DMAGICS_CONVERSION_DIAGNOSTICS"
 fi
 #
 cd ${MaGICSROOT}/src/MaGICS
