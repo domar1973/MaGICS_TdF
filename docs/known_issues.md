@@ -1,5 +1,14 @@
 # Known Issues
 
+## Resolved: Erber pair-production prefactor
+
+Resolved on branch `fix/erber-pair-prefactor`. The old
+`pair_production_probability()` prefactor `1.234E18 s^-1` was a manual
+calculation error confirmed by the original author. It has been replaced with
+the Erber 1966 Eq. (3.4) time-rate prefactor
+`0.16 * alpha * electron_mass * c * c / hbar`. See
+`docs/erber_prefactor_bugfix.md`.
+
 ## `inic()` dispatch mismatches
 
 These issues are recorded only; they are not corrected in this change.
