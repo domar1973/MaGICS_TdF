@@ -26,6 +26,7 @@
 # Some constants used within this installation script
 #
 f77command="gfortran -O2 -Wall"
+diagnostics_flags=""
 #
 ##############################################################
 #
@@ -157,10 +158,16 @@ done
 #
 exeimg=${MaGICSROOT}/magics
 #
+if [ "_$MAGICS_CONVERSION_DIAGNOSTICS" = "_1" ]
+then
+  diagnostics_csv=${MaGICSROOT}/docs/conversion_probability_diagnostics.csv
+  diagnostics_flags="-DMAGICS_CONVERSION_DIAGNOSTICS -DMAGICS_CONVERSION_DIAGNOSTICS_PATH=\\\"${diagnostics_csv}\\\""
+fi
+#
 cd ${MaGICSROOT}/src/MaGICS
 #
 rm -f $exeimg
-$f77command -O2 -o $exeimg magics.c \
+$f77command -O2 $diagnostics_flags -o $exeimg magics.c \
     ../NR/dbskr3_fromNR.f ../NR/bessik.f ../NR/beschb.f ../NR/chebev.f \
     -I. -L$aireslib -lAires
 rc=$?
