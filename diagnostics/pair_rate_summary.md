@@ -6,15 +6,15 @@ Rows: 40532
 
 ## Row-wise Step Probability Comparison
 
-- Maximum absolute error: `8.42328199650668220e-06`
-- Maximum relative error: `9.15159953916004631e-03`
-- Mean relative error: `1.67407576834881591e-03`
+- Maximum absolute error: `2.64897956966162937e-04`
+- Maximum relative error: `3.73440983685451866e-01`
+- Mean relative error: `1.45355441837933169e-01`
 - Median relative error: `0.00000000000000000e+00`
-- RMS relative error: `3.77122478856512780e-03`
+- RMS relative error: `2.30896670427605893e-01`
 - Relative-error p50: `0.00000000000000000e+00`
-- Relative-error p90: `9.01544946739663879e-03`
-- Relative-error p99: `9.15091823736047076e-03`
-- Relative-error p100: `9.15159953916004631e-03`
+- Relative-error p90: `3.73255685372911816e-01`
+- Relative-error p99: `3.73440056443386070e-01`
+- Relative-error p100: `3.73440983685451866e-01`
 - NaN count across audited values: `0`
 - Inf count across audited values: `0`
 - Non-physical row count: `0`
@@ -29,9 +29,9 @@ Rows: 40532
 - `dt_s`: `1.00000000000000008e-05`
 - Bessel argument `2/(3 chi)`: `2.09548245155833968e+00`
 - MaGICS `step_probability`: `9.75382093344335848e-04`
-- Python `reference_step_probability`: `9.66958811347829166e-04`
-- Absolute difference: `8.42328199650668220e-06`
-- Relative difference: `8.71110733741140182e-03`
+- Python `reference_step_probability`: `7.10484136378172911e-04`
+- Absolute difference: `2.64897956966162937e-04`
+- Relative difference: `3.72841480059681984e-01`
 
 ### Maximum relative error
 
@@ -41,23 +41,23 @@ Rows: 40532
 - `dt_s`: `5.00000000000000083e-07`
 - Bessel argument `2/(3 chi)`: `2.02816626400893441e+00`
 - MaGICS `step_probability`: `5.75850761958482540e-05`
-- Python `reference_step_probability`: `5.70628597548129534e-05`
-- Absolute difference: `5.22216441035300608e-07`
-- Relative difference: `9.15159953916004631e-03`
+- Python `reference_step_probability`: `4.19275941812411357e-05`
+- Absolute difference: `1.56574820146071183e-05`
+- Relative difference: `3.73440983685451866e-01`
 
 ## Integrated Probability Reconstruction
 
 - CSV final `accumulated_probability`: `5.25407086018462310e-01`
 - `P_product = 1 - product(1 - p_i)`: `5.25407086018462088e-01`
 - `P_exp_linear = 1 - exp(-sum(p_i))`: `5.25347205266517792e-01`
-- `tau_reference = sum(gamma_rate_i * dt_i)`: `7.39133352046933978e-01`
-- `P_reference = 1 - exp(-tau_reference)`: `5.22472415453884564e-01`
+- `tau_reference = sum(gamma_rate_i * dt_i)`: `5.43086753163127822e-01`
+- `P_reference = 1 - exp(-tau_reference)`: `4.19047774265825512e-01`
 
 | Quantity | Absolute difference vs CSV final | Relative difference vs CSV final |
 | --- | ---: | ---: |
 | `P_product` | `2.22044604925031308e-16` | `4.22614408586847416e-16` |
 | `P_exp_linear` | `5.98807519445188063e-05` | `1.13970202416369115e-04` |
-| `P_reference` | `2.93467056457774600e-03` | `5.58551767319450353e-03` |
+| `P_reference` | `1.06359311752636798e-01` | `2.02432198923368584e-01` |
 
 ## Interpretation
 
